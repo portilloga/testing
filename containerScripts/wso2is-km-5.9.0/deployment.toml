@@ -1,0 +1,112 @@
+[server]
+hostname = "$env{SERVICENAME}"
+node_ip = "$env{SERVICEIP}"
+offset = "$env{PORT_OFFSET}"
+base_path = "https://$ref{server.hostname}:${carbon.management.port}"
+serverDetails = "WSO2 IS as KM 5.9.0"
+mode = "single"
+userAgent = "WSO2 IS as KM 5.9.0"
+
+
+[super_admin]
+username = "admin"
+password = "$env{NSVARPASSWORD}"
+create_admin_account = true
+
+[user_store]
+type = "database"
+
+[database.shared_db]
+type = "postgre"
+url = "jdbc:postgresql://$env{POSTGRES_DATABASE_HOST}:$env{POSTGRES_DATABASE_PORT}/$env{POSTGRES_DATABASE_SHARED_DB_NAME}"
+username = "$env{POSTGRES_DATABASE_USERNAME}"
+password = "$env{POSTGRES_DATABASE_PASSWORD}"
+driver = "org.postgresql.Driver"
+validationQuery = "SELECT 1"
+pool_options.maxActive = 100
+pool_options.maxWait = 10000
+pool_options.validationInterval = 10000
+
+[database.apim_db]
+type = "postgre"
+url = "jdbc:postgresql://$env{POSTGRES_DATABASE_HOST}:$env{POSTGRES_DATABASE_PORT}/$env{POSTGRES_DATABASE_APIM_DB_NAME}"
+username = "$env{POSTGRES_DATABASE_USERNAME}"
+password = "$env{POSTGRES_DATABASE_PASSWORD}"
+driver = "org.postgresql.Driver"
+validationQuery = "SELECT 1"
+pool_options.maxActive = 100
+pool_options.maxWait = 10000
+
+[database.identity_db]
+type = "postgre"
+url = "jdbc:postgresql://$env{POSTGRES_DATABASE_HOST}:$env{POSTGRES_DATABASE_PORT}/$env{POSTGRES_DATABASE_IDENTITY_DB_NAME}"
+username = "$env{POSTGRES_DATABASE_USERNAME}"
+password = "$env{POSTGRES_DATABASE_PASSWORD}"
+driver = "org.postgresql.Driver"
+validationQuery = "SELECT 1"
+pool_options.maxActive = 100
+pool_options.maxWait = 30000
+
+[keystore.primary]
+name = "wso2carbon.jks"
+password = "wso2carbon"
+
+[identity]
+data_source = "jdbc/WSO2AM_DB"
+
+[authentication.consent]
+data_source = "jdbc/WSO2AM_DB"
+prompt = true
+
+[transport.https.sslHostConfig.properties]
+certificateVerification = "want"
+
+[tasks]
+client_dispatch_address = "https://$ref{server.hostname}:$env{CLIENT_DISPATCH_PORT}"
+server_address = "https://$ref{server.hostname}:$env:{SERVER_ADDRESS_PORT}"
+
+[oauth]
+prompt_consent = "$ref{authentication.consent.prompt}"
+
+[oauth.scope_validator.xacml]
+enable = true
+
+[oauth.grant_type.uma_ticket]
+enable = true
+
+[identity_mgt.user_self_registration]
+allow_self_registration = false
+
+[default_cache_timeout]
+force_local_cache = true
+
+[event.default_listener.mutual_tls_authenticator]
+priority = ""
+enable = false
+
+[[event_listener]]
+id = "mutual_tls_authenticator"
+type = "org.wso2.carbon.identity.core.handler.AbstractIdentityHandler"
+name = "org.wso2.carbon.identity.oauth2.token.handler.clientauth.mutualtls.MutualTLSClientAuthenticator"
+order = "158"
+enable = false
+
+[oauth.extensions]
+token_generator = "org.wso2.carbon.apimgt.keymgt.issuers.APIMTokenIssuer"
+
+######################################### KEY STORE ########################################
+[[apim.gateway.environment]]
+name = "Production and Sandbox"
+type = "hybrid"
+description = "This is a hybrid gateway that handles both production and sandbox token traffic."
+service_url = "https://$env{APIM_SERVER_HOST_NAME}:$env{APIM_SERVER_ADMIN_PORT}/services/"
+username= "$env{APIM_SERVER_USER}"
+password= "$env{APIM_SERVER_PASSWORD}"
+
+[apim.throttling]
+enable_data_publishing = false
+enable_policy_deploy = false
+enable_blacklist_condition = false
+enable_decision_connection = false
+receiver_url = "tcp://$env{APIM_SERVER_HOST_NAME}:$env{APIM_SERVER_TCP_PORT}"
+receiver_auth_url = "ssl://$env{APIM_SERVER_HOST_NAME}:$env{APIM_SERVER_SSL_PORT}"

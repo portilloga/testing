@@ -1,0 +1,33 @@
+<datasources-configuration xmlns:svns="http://org.wso2.securevault/configuration">  
+    <providers>
+        <provider>org.wso2.carbon.ndatasource.rdbms.RDBMSDataSourceReader</provider>
+    </providers>
+    <datasources>    
+		<datasource>
+			  <name>CNQ_DS</name>
+			  <description> CNQ datasource</description>
+			  <jndiConfig>
+				<name>jdbc/CNQ_DB</name>
+			  </jndiConfig>
+			  <definition type="RDBMS">
+				<configuration>
+					<url>jdbc:postgresql://rtm2-dev30-rtm2-dev30-postgres-rtm-32037.kube01.cnq.lan:32037/damdev30</url>
+					<username>postgres</username>
+					<password>jetendouearvinckyagg</password>
+					<driverClassName>org.postgresql.Driver</driverClassName>
+					<maxActive>80</maxActive>
+					<maxWait>60000</maxWait>
+					<minIdle>5</minIdle>
+					<testOnBorrow>true</testOnBorrow>
+					<validationQuery>SELECT 1;</validationQuery>
+					<defaultAutoCommit>false</defaultAutoCommit>
+					<validationInterval>30000</validationInterval>
+				<jmxEnabled>true</jmxEnabled>
+			   </configuration>
+			   </definition>
+		</datasource>
+    </datasources>
+</datasources-configuration>
+
+
+

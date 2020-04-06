@@ -1,0 +1,74 @@
+[server]
+hostname = "$env{SERVICENAME}"
+node_ip = "$env{SERVICEIP}"
+mode = "single"
+offset = "$env{PORT_OFFSET}"
+base_path = "${carbon.protocol}://${carbon.host}:${carbon.management.port}"
+server_role = "default"
+
+[super_admin]
+username = "admin"
+password = "$env{NSVARPASSWORD}"
+create_admin_account = true
+
+[user_store]
+type = "database"
+
+[database.shared_db]
+type = "postgre"
+url = "jdbc:postgresql://$env{POSTGRES_DATABASE_HOST}:$env{POSTGRES_DATABASE_PORT}/$env{POSTGRES_DATABASE_SHARED_DB_NAME}"
+username = "$env{POSTGRES_DATABASE_USERNAME}"
+password = "$env{POSTGRES_DATABASE_PASSWORD}"
+driver = "org.postgresql.Driver"
+validationQuery = "SELECT 1"
+pool_options.maxActive = 100
+pool_options.maxWait = 10000
+pool_options.validationInterval = 10000
+
+[database.apim_db]
+type = "postgre"
+url = "jdbc:postgresql://$env{POSTGRES_DATABASE_HOST}:$env{POSTGRES_DATABASE_PORT}/$env{POSTGRES_DATABASE_APIM_DB_NAME}"
+username = "$env{POSTGRES_DATABASE_USERNAME}"
+password = "$env{POSTGRES_DATABASE_PASSWORD}"
+driver = "org.postgresql.Driver"
+validationQuery = "SELECT 1"
+pool_options.maxActive = 100
+pool_options.maxWait = 10000
+
+[keystore.tls]
+file_name =  "wso2carbon.jks"
+type =  "JKS"
+password =  "wso2carbon"
+alias =  "wso2carbon"
+key_password =  "wso2carbon"
+
+[[apim.gateway.environment]]
+name = "Production and Sandbox"
+type = "hybrid"
+display_in_api_console = true
+description = "This is a hybrid gateway that handles both production and sandbox token traffic."
+show_as_token_endpoint_url = true
+service_url = "https://localhost:${mgt.transport.https.port}/services/"
+username= "${admin.username}"
+password= "${admin.password}"
+ws_endpoint = "ws://localhost:$env{WS_ENDPOINT_PORT}"
+wss_endpoint = "wss://localhost:$env{WSS_ENDPOINT_PORT}"
+http_endpoint = "http://localhost:${http.nio.port}"
+https_endpoint = "https://localhost:${https.nio.port}"
+
+########################### EXTERNAL KEY MANAGER #####################
+[apim.key_manager]
+service_url = "https://$env{IDENTITY_SERVER_HOST_NAME}:$env{IDENTITY_SERVER_PORT}/services/"
+
+[apim.cors]
+allow_origins = "*"
+allow_methods = ["GET","PUT","POST","DELETE","PATCH","OPTIONS"]
+allow_headers = ["authorization","Access-Control-Allow-Origin","Content-Type","SOAPAction"]
+allow_credentials = false
+
+[[event_handler]]
+name="userPostSelfRegistration"
+subscriptions=["POST_ADD_USER"]
+
+[service_provider]
+sp_name_regex = "^[\\sa-zA-Z0-9._-]*$"
